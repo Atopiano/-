@@ -31,12 +31,6 @@ def get_world_index(ticker, start_day, end_day):
     '''
     return pdr.get_data_yahoo(ticker, start_day, end_day)
 
-def get_normalization(df_ts):
-    """
-    데이터를 MinMaxScaler로 정규화한 결과를 반환한다.
-    """
-    return MinMaxScaler().fit_transform(df_ts)
-
 def main():
     
     # 경로 세팅
@@ -60,19 +54,21 @@ def main():
         # 세계 주가 종가 정보
         # Tickers of World Indexes
         WORLD_INDEX_TICKERS = [ {'ticker':'^GSPC',     'nation':'US',          'name':'S&P 500'},
-                                {'ticker':'^IXIC',     'nation':'US',          'name':'NASDAQ Composite'},
+                                {'ticker':'^IXIC',     'nation':'US',          'name':'NASDAQ'},
                                 {'ticker':'^N225',     'nation':'Japan',       'name':'Nikkei 225'},
-                                {'ticker':'399001.SZ', 'nation':'China',       'name':'Shenzhen Index'},
-                                {'ticker':'^KS11',     'nation':'Korea',       'name':'KOSPI Composite Index'},
+                                {'ticker':'399001.SZ', 'nation':'China',       'name':'Shenzhen'},
+                                {'ticker':'^KS11',     'nation':'Korea',       'name':'KOSPI'},
         ]
-        fig = plt.figure(figsize=(20, 10)) # 그래프 크기 조절
-        for index in WORLD_INDEX_TICKERS:
-            index_df    = get_world_index(index['ticker'], start_day, end_day)[['Close']][::30]
-            index_df[:]    = get_normalization(index_df)
-            if index['ticker'] == '^KS11':
-                st.line_chart(index_df['Close'], use_container_width = True)
-            else:
-                st.line_chart(index_df['Close'], use_container_width = True)
+        
+        # 나스닥 정보
+        index_df    = get_world_index('^IXIC', start_day, end_day)[['Close']]
+        # 나스닥 등락률
+        a = index_df.iloc[-1, 0]
+        b = index_df.iloc[-2, 0]
+        c = round((a - b) / a * 100, 2)
+        st.metric('NASDAQ', value = round(index_df.iloc[-1, 0],2), delta = str(c) + '%')
+        st.line_chart(index_df['Close'], use_container_width = True)
+
 
     # 필요 데이터 불러오기
     base_df = pd.read_csv(os.path.join(filePath, 'data', '상장법인목록.csv'))
@@ -90,7 +86,7 @@ def main():
             # 시각화
             stock_price(stock_name, code, start_day, end_day)
         with col2:
-            st.write(' ')
+            st.write(' ') 
             st.write(' ')
             st.markdown('###### 최근 종목 보조지표')
             st.write(' ')
