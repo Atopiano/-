@@ -1,4 +1,4 @@
-[![Video Label](https://i.imgur.com/VaqpdKV.png)](https://youtu.be/fbSXK_DtRH8)
+[![Video Label](https://i.imgur.com/VaqpdKV.png)](https://youtu.be/EdPLiBW5acs)
 # 팀명
 `카래돈까스`
 
